@@ -26,9 +26,8 @@ def data_to_rgb(data, baseval, interval, round_digits=0):
         a uint8 (3 x rows x cols) ndarray with the
         data encoded
     """
-    data = data.astype(np.float64)
-    data -= baseval
-    data /= interval
+    data = data.astype(np.int32)
+    data += 100000
 
     data = np.around(data / 2**round_digits) * 2**round_digits
 
@@ -41,9 +40,9 @@ def data_to_rgb(data, baseval, interval, round_digits=0):
 
     rgb = np.zeros((3, rows, cols), dtype=np.uint8)
 
-    rgb[2] = ((data / 256) - (data // 256)) * 256
-    rgb[1] = (((data // 256) / 256) - ((data // 256) // 256)) * 256
-    rgb[0] = ((((data // 256) // 256) / 256) - (((data // 256) // 256) // 256)) * 256
+    rgb[0] = data // (256 * 256)
+    rgb[1] = (data - (rgb[0] * 256 * 256)) // 256
+    rgb[2] = data % 256
 
     return rgb
 
